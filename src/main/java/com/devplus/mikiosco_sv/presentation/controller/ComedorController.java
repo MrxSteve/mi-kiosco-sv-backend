@@ -32,7 +32,7 @@ public class ComedorController {
     private final GetSuscripcionActivaUseCase getSuscripcionActivaUseCase;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE', 'KITCHEN')")
     @Operation(summary = "Ver datos del comedor autenticado")
     public ResponseEntity<ComedorResponse> get(@AuthenticationPrincipal AuthenticatedUser caller) {
         return ResponseEntity.ok(getComedorUseCase.execute(caller));
@@ -49,7 +49,7 @@ public class ComedorController {
     }
 
     @GetMapping("/config")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE', 'KITCHEN')")
     @Operation(summary = "Ver configuración del comedor",
             description = "Moneda, horario, intentos de login, pie de ticket, etc.")
     public ResponseEntity<ConfiguracionComedorResponse> getConfig(
@@ -68,7 +68,7 @@ public class ComedorController {
     }
 
     @GetMapping("/subscription")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE', 'KITCHEN')")
     @Operation(summary = "Ver suscripción activa del comedor")
     public ResponseEntity<SubscriptionResponse> subscription(
             @AuthenticationPrincipal AuthenticatedUser caller) {
