@@ -3,8 +3,10 @@ package com.devplus.mikiosco_sv.application.usecase.auth;
 import com.devplus.mikiosco_sv.domain.exception.ForbiddenException;
 import com.devplus.mikiosco_sv.domain.exception.UnauthorizedException;
 import com.devplus.mikiosco_sv.domain.model.GenericStatus;
+import com.devplus.mikiosco_sv.domain.model.SubscriptionStatus;
 import com.devplus.mikiosco_sv.domain.model.UserRole;
 import com.devplus.mikiosco_sv.infrastructure.persistence.entity.UsuarioEntity;
+import com.devplus.mikiosco_sv.infrastructure.persistence.repository.SuscripcionRepository;
 import com.devplus.mikiosco_sv.infrastructure.persistence.repository.UsuarioRepository;
 import com.devplus.mikiosco_sv.infrastructure.security.JwtService;
 import com.devplus.mikiosco_sv.presentation.dto.request.LoginRequest;
@@ -26,6 +28,7 @@ public class LoginUseCase {
     private static final int DEFAULT_LOCKOUT_MINUTES = 15;
 
     private final UsuarioRepository usuarioRepository;
+    private final SuscripcionRepository suscripcionRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
@@ -106,9 +109,18 @@ public class LoginUseCase {
     }
 
     private void validateComedorActive(UsuarioEntity usuario) {
-        if (usuario.getComedor() != null
-                && usuario.getComedor().getStatus() == GenericStatus.INACTIVE) {
+        if (usuario.getComedor() == null) return; // super_admin
+
+        if (usuario.getComedor().getStatus() == GenericStatus.INACTIVE) {
             throw new ForbiddenException("El comedor está inactivo. Contacte al administrador.");
+        }
+
+        boolean hasActiveSub = suscripcionRepository.existsByComedor_IdAndStatus(
+                usuario.getComedor().getId(), SubscriptionStatus.ACTIVE);
+
+        if (!hasActiveSub) {
+            throw new ForbiddenException(
+                    "La suscripción del comedor ha vencido. Contacte al administrador del sistema.");
         }
     }
 
