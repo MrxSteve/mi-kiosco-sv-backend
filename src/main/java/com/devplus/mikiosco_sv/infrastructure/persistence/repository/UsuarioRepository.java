@@ -21,4 +21,6 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, UUID> {
     boolean existsByRole(UserRole role);
 
     List<UsuarioEntity> findAllByComedor_Id(UUID comedorId);
+
+    long countByComedorIsNotNull();
 }

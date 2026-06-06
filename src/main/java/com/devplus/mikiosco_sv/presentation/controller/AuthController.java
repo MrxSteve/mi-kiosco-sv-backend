@@ -39,4 +39,13 @@ public class AuthController {
     public ResponseEntity<UserResponse> me(@AuthenticationPrincipal AuthenticatedUser caller) {
         return ResponseEntity.ok(getMyProfileUseCase.execute(caller));
     }
+
+    @PostMapping("/logout")
+    @Operation(summary = "Cerrar sesión",
+            description = "JWT es stateless: elimina el token en el cliente. "
+                    + "Invalidación real con blacklist se implementará en versión futura.")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<Void> logout() {
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -3,6 +3,7 @@ package com.devplus.mikiosco_sv.presentation.controller;
 import com.devplus.mikiosco_sv.application.usecase.usuario.*;
 import com.devplus.mikiosco_sv.infrastructure.security.AuthenticatedUser;
 import com.devplus.mikiosco_sv.presentation.dto.request.CreateUserRequest;
+import com.devplus.mikiosco_sv.presentation.dto.request.ResetUserPasswordRequest;
 import com.devplus.mikiosco_sv.presentation.dto.request.UpdateUserRequest;
 import com.devplus.mikiosco_sv.presentation.dto.response.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +31,7 @@ public class UserController {
     private final CreateUserUseCase createUserUseCase;
     private final UpdateUserUseCase updateUserUseCase;
     private final ToggleUserStatusUseCase toggleUserStatusUseCase;
+    private final ResetUserPasswordUseCase resetUserPasswordUseCase;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
@@ -67,5 +69,17 @@ public class UserController {
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser caller) {
         return ResponseEntity.ok(toggleUserStatusUseCase.execute(id, caller));
+    }
+
+    @PostMapping("/{id}/reset-password")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @Operation(summary = "Resetear contraseña",
+            description = "Admin establece una nueva contraseña directamente. También desbloquea la cuenta.")
+    public ResponseEntity<Void> resetPassword(
+            @PathVariable UUID id,
+            @Valid @RequestBody ResetUserPasswordRequest request,
+            @AuthenticationPrincipal AuthenticatedUser caller) {
+        resetUserPasswordUseCase.execute(id, request.getNewPassword(), caller);
+        return ResponseEntity.noContent().build();
     }
 }

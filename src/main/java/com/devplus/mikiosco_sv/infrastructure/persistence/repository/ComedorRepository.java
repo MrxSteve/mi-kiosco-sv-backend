@@ -15,4 +15,6 @@ public interface ComedorRepository extends JpaRepository<ComedorEntity, UUID> {
     boolean existsByEmail(String email);
 
     List<ComedorEntity> findAllByStatus(GenericStatus status);
+
+    long countByStatus(GenericStatus status);
 }
