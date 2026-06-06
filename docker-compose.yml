@@ -1,0 +1,49 @@
+services:
+
+  mikiosco-db:
+    image: postgres:16-alpine
+    container_name: mikiosco-db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - mikiosco-db-data:/var/lib/postgresql/data
+    networks:
+      - mikiosco-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mikiosco-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mikiosco-app
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: mikiosco-db
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    depends_on:
+      mikiosco-db:
+        condition: service_healthy
+    networks:
+      - mikiosco-network
+    restart: on-failure
+
+volumes:
+  mikiosco-db-data:
+    name: mikiosco-db-data
+
+networks:
+  mikiosco-network:
+    name: mikiosco-network

@@ -1,0 +1,29 @@
+# Build artifacts — nunca copiar al contexto de build
+target/
+
+# IDE y herramientas locales
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Maven wrapper — no se usa en el Dockerfile (usamos imagen oficial de Maven)
+.mvn/
+mvnw
+mvnw.cmd
+
+# Configuración local y sensible
+.env
+docker-compose.yml
+Dockerfile
+
+# Documentación
+docs/
+HELP.md
+*.md
