@@ -1,5 +1,6 @@
 package com.devplus.mikiosco_sv.infrastructure.persistence.repository;
 
+import com.devplus.mikiosco_sv.domain.model.OrderStatus;
 import com.devplus.mikiosco_sv.infrastructure.persistence.entity.OrdenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -31,4 +32,8 @@ public interface OrdenRepository extends JpaRepository<OrdenEntity, UUID> {
     Optional<OrdenEntity> findByIdAndComedorId(UUID id, UUID comedorId);
 
     Optional<OrdenEntity> findByComedorIdAndOrderNumber(UUID comedorId, Long orderNumber);
+
+    // Cocina: órdenes enviadas con status activo de cocina, ordenadas por tiempo de llegada
+    List<OrdenEntity> findByComedorIdAndSentToKitchenAtIsNotNullAndStatusInOrderBySentToKitchenAtAsc(
+            UUID comedorId, List<OrderStatus> statuses);
 }
