@@ -3,6 +3,7 @@ package com.devplus.mikiosco_sv.infrastructure.persistence.repository;
 import com.devplus.mikiosco_sv.domain.model.OrderStatus;
 import com.devplus.mikiosco_sv.infrastructure.persistence.entity.OrdenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -11,7 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface OrdenRepository extends JpaRepository<OrdenEntity, UUID> {
+public interface OrdenRepository extends JpaRepository<OrdenEntity, UUID>,
+        JpaSpecificationExecutor<OrdenEntity> {
 
     // Historial de cliente (módulo 5)
     List<OrdenEntity> findByClienteIdAndComedorIdOrderByCreatedAtDesc(UUID clienteId, UUID comedorId);
