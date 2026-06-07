@@ -35,7 +35,7 @@ public class PromotionController {
     private final ValidatePromotionUseCase validatePromotionUseCase;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
     @Operation(summary = "Listar promociones del comedor")
     public ResponseEntity<List<PromotionResponse>> list(
             @AuthenticationPrincipal AuthenticatedUser caller) {

@@ -1,0 +1,7 @@
+package com.devplus.mikiosco_sv.domain.model;
+
+public enum PaymentMethod {
+    CASH,
+    CARD,
+    MIXED
+}
