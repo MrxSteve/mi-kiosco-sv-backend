@@ -79,7 +79,7 @@ public class OrderAssembler {
                         detallesByOrden.getOrDefault(o.getId(), List.of()),
                         extrasByDetalle,
                         pagoByOrden.get(o.getId()),
-                        clientesById.get(o.getClienteId()),
+                        o.getClienteId() != null ? clientesById.get(o.getClienteId()) : null,
                         o.getPromocionId() == null ? null : promoCodeById.get(o.getPromocionId())))
                 .toList();
     }

@@ -28,7 +28,7 @@ public class CreateOrderUseCase {
                     .orElseThrow(() -> NotFoundException.of("Cliente", request.getClienteId()));
         }
 
-        var orden = ordenRepository.save(OrdenEntity.builder()
+        var saved = ordenRepository.saveAndFlush(OrdenEntity.builder()
                 .comedorId(comedorId)
                 .usuarioId(caller.userId())
                 .clienteId(request.getClienteId())
@@ -36,6 +36,9 @@ public class CreateOrderUseCase {
                 .notes(request.getNotes())
                 .build());
 
+        // Re-fetch para obtener valores generados por la DB: order_number (GENERATED ALWAYS AS IDENTITY),
+        // created_at y updated_at que el trigger de PostgreSQL asigna al hacer flush.
+        var orden = ordenRepository.findById(saved.getId()).orElseThrow();
         return assembler.assembleSingle(orden);
     }
 }
