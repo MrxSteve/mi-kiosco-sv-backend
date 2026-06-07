@@ -39,6 +39,7 @@ public class OrderController {
     private final RegisterPaymentUseCase registerPaymentUseCase;
     private final SendToKitchenUseCase sendToKitchenUseCase;
     private final CancelOrderUseCase cancelOrderUseCase;
+    private final DeliverOrderUseCase deliverOrderUseCase;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
@@ -142,5 +143,16 @@ public class OrderController {
             @PathVariable UUID id,
             @AuthenticationPrincipal AuthenticatedUser caller) {
         return ResponseEntity.ok(cancelOrderUseCase.execute(id, caller));
+    }
+
+    @PostMapping("/{id}/deliver")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
+    @Operation(summary = "Marcar orden como entregada",
+            description = "Transición válida: COMPLETED → DELIVERED. "
+                    + "Usar cuando el mesero entrega la orden al cliente.")
+    public ResponseEntity<OrderResponse> deliver(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal AuthenticatedUser caller) {
+        return ResponseEntity.ok(deliverOrderUseCase.execute(id, caller));
     }
 }
