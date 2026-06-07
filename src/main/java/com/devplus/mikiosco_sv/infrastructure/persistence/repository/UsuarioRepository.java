@@ -23,4 +23,6 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, UUID> {
     List<UsuarioEntity> findAllByComedor_Id(UUID comedorId);
 
     long countByComedorIsNotNull();
+
+    long countByComedor_Id(UUID comedorId);
 }

@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -24,9 +26,18 @@ public class GetTopClientsUseCase {
                         .customerCode((String) row[1])
                         .orderCount(((Number) row[2]).longValue())
                         .totalSpent((BigDecimal) row[3])
-                        .lastOrderAt(row[4] == null ? null : ((java.sql.Timestamp) row[4]).toInstant()
-                                .atOffset(java.time.ZoneOffset.UTC))
+                        .lastOrderAt(toOffsetDateTime(row[4]))
                         .build())
                 .toList();
+    }
+
+    // Hibernate 6 + PostgreSQL JDBC puede devolver TIMESTAMPTZ como Instant, OffsetDateTime
+    // o java.sql.Timestamp según el driver y la versión. Manejamos los tres casos.
+    private OffsetDateTime toOffsetDateTime(Object value) {
+        if (value == null) return null;
+        if (value instanceof OffsetDateTime odt)    return odt;
+        if (value instanceof Instant instant)       return instant.atOffset(ZoneOffset.UTC);
+        if (value instanceof java.sql.Timestamp ts) return ts.toInstant().atOffset(ZoneOffset.UTC);
+        return null;
     }
 }
